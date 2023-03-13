@@ -30,12 +30,40 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   /**************************************************************************** */
 
   //! END @TODO1
-  
+
+  app.get( "/filteredimage", async ( req: any, res: any ) => {
+
+    let image_url = req.query.image_url;
+    
+    if ( !image_url ) {
+      res.status(400).send("image_url parameter is required");
+    }
+
+    // g modifier: global. All matches (don't return on first match)
+    // i modifier: insensitive. Case insensitive match (ignores case of [a-zA-Z])
+    var re = /jpg/gi; 
+    if ( image_url.toString().search(re) == -1 ) { 
+      res.status(415).send("Unsupported Media Type.");
+    }
+
+    try {
+      const filteredpath = await filterImageFromURL(image_url);
+      res.status(200).sendFile(filteredpath, () => {
+        deleteLocalFiles([filteredpath]);
+      });
+    } catch (e) {
+        // if Could not find MIME for Buffer check https://knowledge.udacity.com/questions/742363
+        res.status(422).send("The server understands the content type of the request entity, and the syntax of the request entity is correct but was unable to process the contained instructions.");
+    }
+
+  });
+
   // Root Endpoint
   // Displays a simple message to the user
-  app.get( "/", async ( req, res ) => {
-    res.send("try GET /filteredimage?image_url={{}}")
+  app.get( "/", async ( req: any, res: any ) => {
+    res.send("try GET /filteredimage?image_url={{}}");
   } );
+
   
 
   // Start the Server
