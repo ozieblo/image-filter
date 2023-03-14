@@ -1,4 +1,5 @@
 import express from 'express';
+import { Request, Response } from "express";
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
@@ -31,9 +32,9 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   //! END @TODO1
 
-  app.get( "/filteredimage", async ( req: any, res: any ) => {
+  app.get( "/filteredimage", async ( req: Request, res: Response ) => {
 
-    let image_url = req.query.image_url;
+    let image_url: string = req.query.image_url;
     
     if ( !image_url ) {
       res.status(400).send("image_url parameter is required");
@@ -60,7 +61,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   // Root Endpoint
   // Displays a simple message to the user
-  app.get( "/", async ( req: any, res: any ) => {
+  app.get( "/", async ( req: Request, res: Response ) => {
     res.send("try GET /filteredimage?image_url={{}}");
   } );
 
